@@ -32,64 +32,65 @@ library(rsconnect)
 library(curl)
 library(devtools)
 
-#1 Map of central valley basins, when you select your basin, the fill color changes (cv.shp and sgma_basins.shp)
+################
 
-# Read in our data
-cv_all <- read_sf(dsn = here::here("data"),
-                  layer = "cv") %>% 
-  st_transform(crs = 4326) %>% 
-  clean_names()
+#cv_all <- read_sf(dsn = here::here("data"),
+                  #layer = "cv") %>% 
+  #st_transform(crs = 4326) %>% 
+  #clean_names()
 
-sgma_basins_all <- read_sf(dsn = here::here("data"),
-                           layer = "sgma_basins") %>% 
+sj_valley_basins <- read_sf(dsn = here::here("data"),
+                           layer = "sj_valley_basins") %>% 
   st_transform(crs = 4326) %>% 
   clean_names() 
 
-basin_pop_area <- read_csv(here("data", "basin_pop_area.csv"))
+sj_basin_pop_area <- read_csv(here("data", "sj_basin_pop_area.csv"))
 
-sgma_basins <- sgma_basins_all %>% 
+sj_basins <- sj_valley_basins %>% 
   separate(basin_su_1, c("basin", "sub_basin"), sep = " - ") %>% 
   mutate(sub_basin_final = ifelse(is.na(sub_basin), basin, sub_basin)) %>% 
   mutate(sub_basin_final = to_upper_camel_case(sub_basin_final, sep_out = " ")) %>% 
   arrange(sub_basin_final) %>% 
-  full_join(basin_pop_area) %>% 
+  full_join(sj_basin_pop_area) %>% 
   dplyr::select(-sub_basin)
+
+##############
 
 wgs84 = "+proj=longlat +datum=WGS84 +ellps=WGS84 +no_defs" # Just have this ready to copy/paste
 
-max_score_raster <- raster::raster(here::here("data", "Max_final_score_LU.tif"))
-
+max_score_raster <- raster::raster(here::here("data", "sj_suit_score.tif"))
 max_score_reproj = projectRaster(max_score_raster, crs = wgs84, method = "bilinear")
 
-zipcodes <- read_sf(dsn = here::here("data"),
-                           layer = "ZCTA2010") %>% 
-  st_transform(crs = 4326) %>% 
-  clean_names() %>% 
-  dplyr::select(zcta) 
-
+################
 
 drywells <- read_sf(here("data",
-                         "drywells_cv.shp")) %>%
+                         "sj_dry_wells.shp")) %>%
   st_transform(crs = 4326)
 
+################
 
 geotracker <- read_sf(here("data",
-                           "geotracker_cv.shp")) %>%
+                           "sj_geotracker.shp")) %>%
   st_transform(crs = 4326)
 
+#################
+
 nhd <- read_sf(here("data",
-                    "NHD_select_cv.shp")) %>% 
+                    "sj_nhd_select.shp")) %>% 
   st_transform(crs = 4326) %>% 
   dplyr::select(FType, FCode)%>% 
   st_zm(drop = T, what = "ZM")
 
+#################
+
 gde <- read_sf(here("data",
-                    "GDE_cv.shp")) %>% 
+                    "sj_gdes.shp")) %>% 
   st_transform(crs = 4326)
 
 gde_fix <- st_make_valid(gde) %>% 
   st_cast("MULTIPOLYGON")
 
+############################################################
 
 # User interface
 
@@ -102,6 +103,9 @@ ui <- navbarPage(
 "Recharge for Resilience",
                  #themeSelector(),
                  theme = shinytheme("flatly"),
+
+
+
                  tabPanel("Project Information",
                           icon = icon("home"),
                           h1("Explore a Decision Support Tool for",
@@ -123,20 +127,17 @@ ui <- navbarPage(
                             )),
                                     column(2)
                  )),
+
+
+
                  tabPanel("Groundwater Basins", 
                           icon = icon("tint"),
                           sidebarLayout(
-                            sidebarPanel(h4("The decision support tool is designed for use in any Central Valley groundwater basin. Enter a zipcode below to display the zipcode on the map, and then use your cursor to identify which groundwater basin it is in."),
-                                         shiny::HTML("<br><br><br>"),
-                                         textInput("zip_code",
-                                                   label = ("Enter a zipcode:"),
-                                                   value = "e.g. 93638"),
-                                         shiny::HTML("<br><br><br>"),
-                                         h4("Select a groundwater basin to see its location within the Central Valley. Learn more about its size, population, and priority status as assigned by the Department of Water Resources. After making a basin selection, you can further explore recharge suitability for projects that acheive multiple benefits on the next page."),
+                            sidebarPanel(h4("Select a groundwater basin to see its location within the Central Valley. Learn more about its size, population, and priority status as assigned by the Department of Water Resources. After making a basin selection, you can further explore recharge suitability for projects that acheive multiple benefits on the next page."),
                                          shiny::HTML("<br><br><br>"),
                                          selectInput("gw_basin",
                                                      label = ("Central Valley Groundwater Basins:"),
-                                                     choices = c(unique(sgma_basins$sub_basin_final)),
+                                                     choices = c(unique(sj_basins$sub_basin_final)),
                                                      selected = NULL),
                                          shiny::HTML("<br><br><br>"),
                                          shiny::HTML("<br><br><br>")
@@ -149,6 +150,9 @@ ui <- navbarPage(
                             )
                           )
                  ),
+
+
+
                  tabPanel("Benefits and Feasibility",
                           icon = icon("swatchbook"),
                           sidebarLayout(
@@ -159,6 +163,9 @@ ui <- navbarPage(
                                       h5("The map above allows for visualization of additional considerations related to groundwater recharge benefits and feasibility. Users can turn on or off layers to see the locations of domestic wells that have run dry, GeoTracker contamination clean up sites, conveyance infrastructure and groundwater dependent ecosystems. It would be preferrable to locate recharge projects closer to domestic wells that have run dry, conveyance infrastructure and groundwater dependent ecosystems but farther away from GeoTracker contamination cleanup sites. For a more detailed output of recharge suitability with weighted additional considerations, please contact our team via the link on the Learn More page.")
                             )
                           )),
+
+
+
                  tabPanel("Learn More",
                           icon = icon("envelope"),
                           h1("Bren School Masters Group Project"),
@@ -184,6 +191,9 @@ ui <- navbarPage(
                           fluidRow(tags$img(src = "bren.jpg", height = "10%", width = "10%"),
                                    tags$img(src = "edf.jpg", height = "15%", width = "15%")
                           )),
+
+
+
                  tabPanel("Data Sources",
                           icon = icon("server"),
                           shiny::HTML("<h3> References: </h3>
@@ -200,41 +210,32 @@ ui <- navbarPage(
 )
 
 
-
+#########################################################
 
 # Server
 
 server <- function(input, output){
   
-  ################################################
+  #######################
   # First map!
   
   # Filtering for basins based on dropdown menu
   
   basin_filter <- reactive({
     
-    sgma_basins %>% 
+    sj_basins %>% 
       filter(sub_basin_final == input$gw_basin) 
     
   })
   
-  # Filtering for zip code based on user entry
   
-  zipcode_filter <- reactive({
-    
-    zipcodes %>% 
-      filter(zcta == input$zip_code)
-    
-  })
-  
-  
-  # Making the reactive map with basin and zip code selections
+  # Making the reactive map with basin selection
   
   
   basin_map <- reactive({
     leaflet() %>% 
       addProviderTiles(providers$CartoDB.Positron) %>% 
-      addPolygons(data = sgma_basins,
+      addPolygons(data = sj_basins,
                   label = ~sub_basin_final,
                   labelOptions = labelOptions(direction = 'bottom',
                                               offset=c(0,15)),
@@ -249,10 +250,7 @@ server <- function(input, output){
                   label = ~sub_basin_final,
                   labelOptions = labelOptions(direction = 'bottom',
                                               offset=c(0,15))
-                  ) %>% 
-      addPolygons(data = zipcode_filter(),
-                  color = "red",
-                  weight = 0.4)
+                  ) 
     
  })
   
@@ -263,7 +261,8 @@ server <- function(input, output){
   
 
   
-  ###################################################
+  #################################
+  
   # Table with basin stats!
   
   
@@ -281,33 +280,44 @@ server <- function(input, output){
   
   basin_select <- reactive({ 
    
-    sgma_basins %>% 
+    sj_basins %>% 
       dplyr::filter(sub_basin_final == input$gw_basin)
     
     })
+  
+  ######
   
    max_score_filter <- reactive({
     
     raster_mask <- raster::mask(max_score_reproj, basin_select())
     
     })
-  # 'mask' is not working, need to find a new method of clipping raster to selected basin 
-
+  
+  ######
+  
    wells_filter <- reactive({
      wells_crop <- st_intersection(drywells, basin_select())
    })
+  
+  ######
    
    geo_filter <- reactive({
      geo_crop <- st_intersection(geotracker, basin_select())
    })
+  
+  ######
    
    nhd_filter <- reactive({
      nhd_crop <- st_intersection(nhd, basin_select())
    })
+  
+  ######
    
    gde_filter <- reactive({
      gde_crop <- st_intersection(gde_fix, basin_select())
    })
+  
+  #####
    
    pal <- colorNumeric("RdYlGn", reverse = TRUE, values(max_score_reproj), na.color = "transparent")
    
@@ -315,7 +325,7 @@ server <- function(input, output){
      leaflet() %>%
        #Base layers
        addProviderTiles(providers$CartoDB.Positron, group = "basemap") %>%
-       addPolygons(data = sgma_basins, color = "black", weight = 0.5, fillOpacity = 0) %>% 
+       addPolygons(data = sj_basins, color = "black", weight = 0.5, fillOpacity = 0) %>% 
        addRasterImage(max_score_filter(), colors = pal) %>%
        addLegend(pal = pal, values = values(max_score_filter()), title = "Recharge Suitability") %>% 
        #Overlay groups
@@ -336,10 +346,9 @@ server <- function(input, output){
   
 }
 
-
+################################################
 
 # Put them together to make our app!
 
 shinyApp(ui = ui, server = server)
-
 
