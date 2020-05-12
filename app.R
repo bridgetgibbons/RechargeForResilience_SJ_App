@@ -337,6 +337,7 @@ server <- function(input, output){
          overlayGroups = c("Domestic Wells that Have Run Dry", "Groundwater Dependent Ecosystems", "GeoTracker Clean-Up Sites", "Conveyance Infrastructure"),
          options = layersControlOptions(collapsed = FALSE)
        )
+       
      
    })
   
