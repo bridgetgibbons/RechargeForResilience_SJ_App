@@ -76,7 +76,7 @@ geotracker <- read_sf(here("data",
 #################
 
 nhd <- read_sf(here("data",
-                    "sj_nhd_select.shp")) %>% 
+                    "sj_nhd.shp")) %>% 
   st_transform(crs = 4326) %>% 
   dplyr::select(FType, FCode)%>% 
   st_zm(drop = T, what = "ZM")
