@@ -16,6 +16,10 @@ library(rintrojs)
 library(stringr)
 library(png)
 library(shinyWidgets)
+library(rgdal)
+library(spatstat)
+library(sp)
+library(stargazer)
 
 
 #Mapping 
@@ -32,7 +36,9 @@ library(rsconnect)
 library(curl)
 library(devtools)
 
-################
+source("about_page.R")
+
+########################################## DATA WRANGLING
 
 #cv_all <- read_sf(dsn = here::here("data"),
                   #layer = "cv") %>% 
@@ -76,7 +82,7 @@ geotracker <- read_sf(here("data",
 #################
 
 nhd <- read_sf(here("data",
-                    "sj_nhd_select.shp")) %>% 
+                    "sj_nhd.shp")) %>% 
   st_transform(crs = 4326) %>% 
   dplyr::select(FType, FCode)%>% 
   st_zm(drop = T, what = "ZM")
@@ -90,7 +96,7 @@ gde <- read_sf(here("data",
 gde_fix <- st_make_valid(gde) %>% 
   st_cast("MULTIPOLYGON")
 
-############################################################
+################################################# APP DEESIGN
 
 # User interface
 
@@ -100,36 +106,18 @@ ui <- navbarPage(
   useShinydashboard()
 ),
 
-"Recharge for Resilience",
+"San Joaquin Valley Decision Support Tool",
                  #themeSelector(),
                  theme = shinytheme("flatly"),
 
-
-
+####### Tab 1
                  tabPanel("Project Information",
                           icon = icon("home"),
-                          h1("Explore a Decision Support Tool for",
-                             style = "font-size:32px",
-                             align = "center"),
-                          h1("Strategic Siting of Multi-Benefit Groundwater Recharge Projects",
-                             style = "font-size:40px",
-                             align = "center"),
-                          img(src="image.jpg", height="100%",width="100%",style = 'position: absolute; opacity: 0.2;'
-                          ),
-                          fluidRow(column(2), column(8,shiny::HTML("
-                          <h4> <center> <br> California has an increasingly scarce and unreliable surface water supply. As the climate changes, droughts are expected to become more frequent and extreme, precipitation is expected to fall as rain rather than snow in shorter, more intense periods, and reliance on the Sierra snowpack for storage will become less tenable. Strategically planning for water storage, including the protection and augmentation of groundwater resources, can help make farms, cities, and ecosystems more resilient to less predictable future water availability. <br> <br>
+                          header,
+                          project,
+                          creators),
 
-                            The Sustainable Groundwater Management Act of 2014 (SGMA) adds regulatory structure to the goal of protecting and augmenting groundwater supplies by requiring a regionalized approach to groundwater management throughout the state. Many Groundwater Sustainability Agencies (GSAs) have identified managed aquifer recharge (MAR) as a tool they will use to comply with SGMA during  the 20-year implementation period, beginning in 2020. <br> <br>
-                            
-                            Currently, groundwater managers lack the tools and information necessary to identify ideal locations to invest in groundwater recharge projects that are able to achieve multiple benefits. The spatial visualization in this app allows users to see how physical surface and subsurface conditions along with a surficial nitrogen balance inform areas that are better and worse for implementing recharge in a groundwater basin. In addition, users are able to overlay the location of other points of interest, including: domestic wells that have run dry, potential groundwater dependent ecosystems, listed contamination cleanup sites, and water conveyance infrastructure. <br> <br>
-                            
-                            This tool makes information regarding multi-benefit groundwater recharge at a regional level available to groundwater management entities, allowing Groundwater Sustainability Agencies to meet compliance requirements while realizing other locally relevant benefits. The tool incorporates publicly available information from research institutions and state agencies, eliminating some costs associated with using a recharge siting tool and ensuring transferability across the Central Valley to basins with a varying degree of local data. </h4>"
-                            )),
-                                    column(2)
-                 )),
-
-
-
+####### Tab 2
                  tabPanel("Groundwater Basins", 
                           icon = icon("tint"),
                           sidebarLayout(
@@ -142,29 +130,20 @@ ui <- navbarPage(
                                          shiny::HTML("<br><br><br>"),
                                          shiny::HTML("<br><br><br>")
                             ),
-                            mainPanel(h5("Map of California's Central Valley Groundwater Basins:"),
-                                      tmapOutput("ca_map"),
-                                      h5("Under the Sustainable Groundwater Management Act of 2014 (SGMA), the CA Department of Water Resources assigned basins different priorities based on groundwater conditions. High priority basins have until 2040 to reach balanced inflows and outflows to the aquifer."),
-                                      h5("Learn about your selected basin:"),
-                                      tableOutput("basin_table")
+                            mainPanel(
+                              tabsetPanel(type = "tabs",
+                                          tabPanel("Basin Information",
+                                                   tmapOutput("ca_map"),
+                                                   tableOutput("basin_table")),
+                                          tabPanel("Recharge Suitability Viewer",
+                                                   leafletOutput("max_map"))
+                              )
                             )
                           )
                  ),
+             
 
-
-
-                 tabPanel("Benefits and Feasibility",
-                          icon = icon("swatchbook"),
-                          sidebarLayout(
-                            sidebarPanel(h4("The color ramp displayed in your basin outline represents a relative ranking of groundwater recharge suitability from better (green) to worse (red). The groundwater recharge suitability ranking represents a combination of the following surface and subsurface considerations: The Soil Agricultural Groundwater Banking Index (SAGBI) to describe soil surface conditions, depth to groundwater to approximate aquifer storage space, percent of coarse grained soil materials to a depth of 250 feet below ground surface as a proxy for how easily water can move in the subsurface, and the depth and thickness of the Corcoran clay, which is a low permeability layer that may inhibit recharge in some locations. In addition, this map includes a calculated nitrate balance from three representatve years (1990, 2005, and 2020) to demonstrate the relative likelihood of added nitrate contamination in groundwater as a result of recharge.")
-                            ),
-                            mainPanel(h5("Groundwater Recharge Suitability with Additional Considerations"),
-                                      leafletOutput("max_map"),
-                                      h5("The map above allows for visualization of additional considerations related to groundwater recharge benefits and feasibility. Users can turn on or off layers to see the locations of domestic wells that have run dry, GeoTracker contamination clean up sites, conveyance infrastructure and groundwater dependent ecosystems. It would be preferrable to locate recharge projects closer to domestic wells that have run dry, conveyance infrastructure and groundwater dependent ecosystems but farther away from GeoTracker contamination cleanup sites. For a more detailed output of recharge suitability with weighted additional considerations, please contact our team via the link on the Learn More page.")
-                            )
-                          )),
-
-
+########## Tab 4
 
                  tabPanel("Learn More",
                           icon = icon("envelope"),
@@ -192,7 +171,7 @@ ui <- navbarPage(
                                    tags$img(src = "edf.jpg", height = "15%", width = "15%")
                           )),
 
-
+############ Tab 5
 
                  tabPanel("Data Sources",
                           icon = icon("server"),

@@ -1,0 +1,12 @@
+name: RechargeForResilience_SJ_App
+title: RechargeForResilience_SJ_App
+username:
+account: recharge-for-resilience
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2283966
+bundleId: 3134828
+url: https://recharge-for-resilience.shinyapps.io/RechargeForResilience_SJ_App/
+when: 1589255171.94379
+asMultiple: FALSE
+asStatic: FALSE
