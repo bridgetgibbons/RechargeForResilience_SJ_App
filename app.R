@@ -120,15 +120,17 @@ ui <- navbarPage(
 ####### Tab 2
                  tabPanel("Groundwater Basins", 
                           icon = icon("tint"),
-                          sidebarLayout(
-                            sidebarPanel(h4("Select a groundwater basin to see its location within the Central Valley. Learn more about its size, population, and priority status as assigned by the Department of Water Resources. After making a basin selection, you can further explore recharge suitability for projects that acheive multiple benefits on the next page."),
-                                         shiny::HTML("<br><br><br>"),
-                                         selectInput("gw_basin",
-                                                     label = ("Central Valley Groundwater Basins:"),
-                                                     choices = c(unique(sj_basins$sub_basin_final)),
-                                                     selected = NULL),
-                                         shiny::HTML("<br><br><br>"),
-                                         shiny::HTML("<br><br><br>")
+                          h3("Explore San Joaquin Valley Basins"),
+                          h4("Introductory information about the two tabs and what our data shows."),
+                          br(),
+                          br(),
+                          fluidRow(
+                            column(4,
+                            selectInput("gw_basin",
+                                        label = ("Central Valley Groundwater Basins:"),
+                                        choices = c(unique(sj_basins$sub_basin_final)),
+                                        selected = NULL),
+                            h3("Additional information about the outputs could go here")
                             ),
                             mainPanel(
                               tabsetPanel(type = "tabs",
@@ -136,7 +138,8 @@ ui <- navbarPage(
                                                    tmapOutput("ca_map"),
                                                    tableOutput("basin_table")),
                                           tabPanel("Recharge Suitability Viewer",
-                                                   leafletOutput("max_map"))
+                                                   leafletOutput("max_map"),
+                                                   h3("Additional information about the outputs could go here"))
                               )
                             )
                           )
