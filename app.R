@@ -118,7 +118,7 @@ ui <- navbarPage(
                           creators),
 
 ####### Tab 2
-                 tabPanel("Groundwater Basins", 
+                 tabPanel("Explore the Data", 
                           icon = icon("tint"),
                           h3("Explore San Joaquin Valley Basins"),
                           h4("Introductory information about the two tabs and what our data shows."),
@@ -148,31 +148,31 @@ ui <- navbarPage(
 
 ########## Tab 4
 
-                 tabPanel("Learn More",
-                          icon = icon("envelope"),
-                          h1("Bren School Masters Group Project"),
-                          shiny::HTML("<p> The analysis contained within this web app was completed as a component of a Masters' Thesis Group Project in partial satisfaction of the requirements for the degree of Master of Environmental Science and Management at the Bren School of Environmental Science & Management. This project was completed in partnership with the Environmental Defense Fund, with support from Dr. Scott Jasechko. <br><br>
-                          The decision support tool was developed in ArcMap model builder. The reproducible workflow is free and available for use. If you would like to use the tool to explore potential groundwater recharge project locations in a Central Valley Basin, please contact the Bren student team through the contact page of our website below. <br><br>
-                            
-                            The analyses displayed in this platform were created by: Jenny Balmagia, Bridget Gibbons, Claire Madden, and Anna Perez Welter. <br><br>
-                                      
-                                      The data visualizations provided in this platform were created by: Lydia Bleifuss, Bridget Gibbons, and Claire Madden. "),
-                          tags$div(class = "submit",
-                                   tags$a(href = "https://waterresilience.wixsite.com/waterresilienceca", 
-                                          "Learn More About Our Project", 
-                                          target="_blank")),
-                          tags$div(class = "submit",
-                                   tags$a(href = "http://bren.ucsb.edu/", 
-                                          "Learn More About the Bren School", 
-                                          target="_blank")),
-                          tags$div(class = "submit",
-                                   tags$a(href = "https://www.edf.org/ecosystems/rebalancing-water-use-american-west", 
-                                          "Learn More About the Environmental Defense Fund's Western Water Initiative", 
-                                          target="_blank")),
-                          tags$hr(),
-                          fluidRow(tags$img(src = "bren.jpg", height = "10%", width = "10%"),
-                                   tags$img(src = "edf.jpg", height = "15%", width = "15%")
-                          )),
+                 # tabPanel("Learn More",
+                 #          icon = icon("envelope"),
+                 #          h1("Bren School Masters Group Project"),
+                 #          shiny::HTML("<p> The analysis contained within this web app was completed as a component of a Masters' Thesis Group Project in partial satisfaction of the requirements for the degree of Master of Environmental Science and Management at the Bren School of Environmental Science & Management. This project was completed in partnership with the Environmental Defense Fund, with support from Dr. Scott Jasechko. <br><br>
+                 #          The decision support tool was developed in ArcMap model builder. The reproducible workflow is free and available for use. If you would like to use the tool to explore potential groundwater recharge project locations in a Central Valley Basin, please contact the Bren student team through the contact page of our website below. <br><br>
+                 #            
+                 #            The analyses displayed in this platform were created by: Jenny Balmagia, Bridget Gibbons, Claire Madden, and Anna Perez Welter. <br><br>
+                 #                      
+                 #                      The data visualizations provided in this platform were created by: Lydia Bleifuss, Bridget Gibbons, and Claire Madden. "),
+                 #          tags$div(class = "submit",
+                 #                   tags$a(href = "https://waterresilience.wixsite.com/waterresilienceca", 
+                 #                          "Learn More About Our Project", 
+                 #                          target="_blank")),
+                 #          tags$div(class = "submit",
+                 #                   tags$a(href = "http://bren.ucsb.edu/", 
+                 #                          "Learn More About the Bren School", 
+                 #                          target="_blank")),
+                 #          tags$div(class = "submit",
+                 #                   tags$a(href = "https://www.edf.org/ecosystems/rebalancing-water-use-american-west", 
+                 #                          "Learn More About the Environmental Defense Fund's Western Water Initiative", 
+                 #                          target="_blank")),
+                 #          tags$hr(),
+                 #          fluidRow(tags$img(src = "bren.jpg", height = "10%", width = "10%"),
+                 #                   tags$img(src = "edf.jpg", height = "15%", width = "15%")
+                 #          )),
 
 ############ Tab 5
 
