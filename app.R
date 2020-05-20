@@ -130,7 +130,7 @@ ui <- navbarPage(
                                         label = ("Central Valley Groundwater Basins:"),
                                         choices = c(unique(sj_basins$sub_basin_final)),
                                         selected = NULL),
-                            h3("Additional information about the outputs could go here")
+                            h5("Additional information about the outputs could go here")
                             ),
                             mainPanel(
                               tabsetPanel(type = "tabs",
@@ -139,7 +139,7 @@ ui <- navbarPage(
                                                    tableOutput("basin_table")),
                                           tabPanel("Recharge Suitability Viewer",
                                                    leafletOutput("max_map"),
-                                                   h3("Additional information about the outputs could go here"))
+                                                   h5("Additional information about the outputs could go here"))
                               )
                             )
                           )
