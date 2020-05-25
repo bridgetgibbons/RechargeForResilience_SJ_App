@@ -121,16 +121,16 @@ ui <- navbarPage(
                  tabPanel("Explore the Data", 
                           icon = icon("tint"),
                           h3("Explore San Joaquin Valley Basins"),
-                          h4("Introductory information about the two tabs and what our data shows."),
+                          h4("The map viewer below can be used to explore some of the groundwater recharge suitability information developed through the use of the Recharge for Resilience decision support tool. In the 'Basin Information' tab, users may view the geographic extent of any groundwater basin within the San Joaquin Valley. The dropdown menu to the left of the map allows for selection of the basin of interest. Information about the selected basin appears below the map, including the basin name, area, population and SGMA priority of the groundwater basin. The 'Recharge Suitability Viewer' displays the relative ranking of better to worse recharge locations throughout the selected basin. Users can also turn on or off the layers that display the location of each of the benefit and feasibility considerations including: potential groundwater dependent ecosystems, domestic wells that have run dry, water conveyance infrastructure, and contamination cleanup sites."),
                           br(),
                           br(),
                           fluidRow(
                             column(4,
                             selectInput("gw_basin",
-                                        label = ("Central Valley Groundwater Basins:"),
+                                        label = ("Select a Groundwater Basin:"),
                                         choices = c(unique(sj_basins$sub_basin_final)),
                                         selected = NULL),
-                            h5("Additional information about the outputs could go here")
+                            h5("Hover your cursor over the grey areas on the map to see the name of each groundwater basin in the San Joaquin Valley.")
                             ),
                             mainPanel(
                               tabsetPanel(type = "tabs",
@@ -139,7 +139,8 @@ ui <- navbarPage(
                                                    tableOutput("basin_table")),
                                           tabPanel("Recharge Suitability Viewer",
                                                    leafletOutput("max_map"),
-                                                   h5("Additional information about the outputs could go here"))
+                                                   h5("Use the map inset to select or unselect the benefit and feasibility considerations of interest and see where they are located in relation to suitable recharge locations in your selected basin."),
+                                                   h5("Recharge Suitability Ranks: green = 'better', red = 'worse'"))
                               )
                             )
                           )
