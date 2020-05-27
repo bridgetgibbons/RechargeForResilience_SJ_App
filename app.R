@@ -121,7 +121,10 @@ ui <- navbarPage(
                  tabPanel("Explore the Data", 
                           icon = icon("tint"),
                           h3("Explore San Joaquin Valley Basins"),
-                          h4("The map viewer below can be used to explore some of the groundwater recharge suitability information developed through the use of the Recharge for Resilience decision support tool. In the 'Basin Information' tab, users may view the geographic extent of any groundwater basin within the San Joaquin Valley. The dropdown menu to the left of the map allows for selection of the basin of interest. Information about the selected basin appears below the map, including the basin name, area, population and SGMA priority of the groundwater basin. The 'Recharge Suitability Viewer' displays the relative ranking of better to worse recharge locations throughout the selected basin. Users can also turn on or off the layers that display the location of each of the benefit and feasibility considerations including: potential groundwater dependent ecosystems, domestic wells that have run dry, water conveyance infrastructure, and contamination cleanup sites."),
+                          h4("The map viewer below can be used to explore some of the groundwater recharge suitability information developed through the use of the Recharge for Resilience decision support tool."),
+                          h5("In the 'Basin Information' tab, users may view the geographic extent of any groundwater basin within the San Joaquin Valley. The dropdown menu to the left of the map allows for selection of the basin of interest. Information about the selected basin appears below the map, including the basin name, area, population and SGMA priority of the groundwater basin."),
+                          h5(" The 'Recharge Suitability Viewer' displays the relative ranking of better to worse recharge locations throughout the selected basin. Users can also turn on or off the layers that display the location of each of the benefit and feasibility considerations including: potential groundwater dependent ecosystems, domestic wells that have run dry, water conveyance infrastructure, and contamination cleanup sites."),
+                          h6("Note to users: the Recharge Suitability Viewer may take a few moments to display."),
                           br(),
                           br(),
                           fluidRow(
@@ -130,7 +133,10 @@ ui <- navbarPage(
                                         label = ("Select a Groundwater Basin:"),
                                         choices = c(unique(sj_basins$sub_basin_final)),
                                         selected = NULL),
-                            h5("Hover your cursor over the grey areas on the map to see the name of each groundwater basin in the San Joaquin Valley.")
+                            h5("Hover your cursor over the grey areas on the map to see the name of each groundwater basin in the San Joaquin Valley."),
+                            br(),
+                            br(),
+                            h5("")
                             ),
                             mainPanel(
                               tabsetPanel(type = "tabs",
