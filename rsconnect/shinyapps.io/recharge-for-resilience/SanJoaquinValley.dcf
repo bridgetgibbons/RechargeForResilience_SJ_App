@@ -1,0 +1,13 @@
+name: SanJoaquinValley
+title: SanJoaquinValley
+username:
+account: recharge-for-resilience
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2368010
+bundleId: 3202391
+url: https://recharge-for-resilience.shinyapps.io/SanJoaquinValley/
+when: 1590703709.60112
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: README.md|www/bren.jpg|www/edf.jpg
