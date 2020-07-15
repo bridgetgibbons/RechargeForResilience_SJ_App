@@ -146,6 +146,7 @@ ui <- navbarPage(
                                           tabPanel("Recharge Suitability Viewer",
                                                    leafletOutput("max_map"),
                                                    h5("Use the map inset to select or unselect the benefit and feasibility considerations of interest and see where they are located in relation to suitable recharge locations in your selected basin."),
+                                                   h5("Expand the map layers to change the basemap and toggle data layers on and off."),
                                                    h5("Recharge Suitability Ranks: green = 'better', red = 'worse'"))
                               )
                             )
@@ -313,9 +314,11 @@ server <- function(input, output){
    max_score_map <- reactive({
      leaflet() %>%
        #Base layers
-       addProviderTiles(providers$CartoDB.Positron, group = "basemap") %>%
+       addProviderTiles(providers$CartoDB.Positron, group = "Basemap") %>%
+       addTiles(group = "Street Map") %>% 
+       #Raster Layer
        addPolygons(data = sj_basins, color = "black", weight = 0.5, fillOpacity = 0) %>% 
-       addRasterImage(max_score_filter(), colors = pal) %>%
+       addRasterImage(max_score_filter(), colors = pal, opacity = 0.6, group = "Recharge Score") %>%
        addLegend(pal = pal, values = values(max_score_filter()), title = "Recharge Suitability") %>% 
        #Overlay groups
        addCircleMarkers(data = wells_filter(), group = "Domestic Wells that Have Run Dry", color = "blue", radius = 3, weight = 1) %>%
@@ -323,9 +326,14 @@ server <- function(input, output){
        addPolylines(data = nhd_filter(), group = "Conveyance Infrastructure", color = "black", weight = 5) %>% 
        addPolygons(data = gde_filter(), group = "Groundwater Dependent Ecosystems", color = "green") %>% 
        addLayersControl(
-         overlayGroups = c("Domestic Wells that Have Run Dry", "Groundwater Dependent Ecosystems", "GeoTracker Clean-Up Sites", "Conveyance Infrastructure"),
-         options = layersControlOptions(collapsed = FALSE)
-       )
+         baseGroups = c("Basemap", "Street Map"),
+         overlayGroups = c("Domestic Wells that Have Run Dry", "Groundwater Dependent Ecosystems", "GeoTracker Clean-Up Sites", "Conveyance Infrastructure", "Recharge Score"),
+         options = layersControlOptions(collapsed = TRUE)
+       ) %>% 
+       hideGroup("Conveyance Infrastructure") %>% 
+       hideGroup("Domestic Wells that Have Run Dry") %>% 
+       hideGroup("Groundwater Dependent Ecosystems") %>% 
+       hideGroup("GeoTracker Clean-Up Sites")
        
      
    })
